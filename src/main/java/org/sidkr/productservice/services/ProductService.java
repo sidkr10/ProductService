@@ -1,17 +1,15 @@
 package org.sidkr.productservice.services;
 
-import org.sidkr.productservice.clients.FakeStoreClient;
 import org.sidkr.productservice.models.Product;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
-public class ProductService {
+import java.util.List;
 
-    @Autowired
-    private FakeStoreClient fakeStoreClient;
+public interface ProductService {
 
-    public Product getProduct(long id) {
-       return fakeStoreClient.getProduct(id);
-    }
+    Product getProduct(Long id);
+    List<Product> getAllProducts();
+    Product addProduct(Product product);
+    Product updateProduct(Long productId, Product product);
+    void deleteProduct(Long id);
+    Product replaceProduct(Long productId, Product product);
 }
