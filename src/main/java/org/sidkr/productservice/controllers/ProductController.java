@@ -1,9 +1,9 @@
 package org.sidkr.productservice.controllers;
 
 import org.sidkr.productservice.dtos.ProductDTO;
-import org.sidkr.productservice.models.Category;
 import org.sidkr.productservice.models.Product;
 import org.sidkr.productservice.services.FakeStoreProductService;
+import org.sidkr.productservice.utility.ProductMapperUtility;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,9 +13,11 @@ import java.util.List;
 public class ProductController {
 
     private final FakeStoreProductService fakeStoreProductService;
+    private final ProductMapperUtility productMapper;
 
-    public ProductController(FakeStoreProductService fakeStoreProductService) {
+    public ProductController(FakeStoreProductService fakeStoreProductService, ProductMapperUtility productMapper) {
         this.fakeStoreProductService = fakeStoreProductService;
+        this.productMapper = productMapper;
     }
 
     @GetMapping("/{id}")
@@ -30,36 +32,22 @@ public class ProductController {
 
     @PostMapping
     public Product addProduct(@RequestBody ProductDTO productDTO) {
-        return fakeStoreProductService.addProduct(convertProductDTOToProduct(productDTO));
+        return fakeStoreProductService.addProduct(productMapper.convertProductDTOToProduct(productDTO));
     }
 
     @PutMapping("/{id}")
     public Product updateProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO) {
-        return fakeStoreProductService.replaceProduct(id, convertProductDTOToProduct(productDTO));
+        return fakeStoreProductService.replaceProduct(id, productMapper.convertProductDTOToProduct(productDTO));
     }
 
     @PatchMapping("/{id}")
     public Product patchProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO) {
-        return fakeStoreProductService.updateProduct(id, convertProductDTOToProduct(productDTO));
+        return fakeStoreProductService.updateProduct(id, productMapper.convertProductDTOToProduct(productDTO));
     }
 
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable("id") Long id) {
         fakeStoreProductService.deleteProduct(id);
-    }
-
-    private Product convertProductDTOToProduct(ProductDTO productDTO) {
-        Product product = new Product();
-        product.setId(productDTO.getId());
-        product.setTitle(productDTO.getTitle());
-        product.setDescription(productDTO.getDescription());
-        product.setPrice(productDTO.getPrice());
-        product.setRating(productDTO.getRating());
-        Category category = new Category();
-        category.setName(productDTO.getCategory());
-        product.setCategory(category);
-        product.setImageUrl(productDTO.getImage());
-        return product;
     }
 
 }
