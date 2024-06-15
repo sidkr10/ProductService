@@ -1,7 +1,6 @@
 package org.sidkr.productservice.clients;
 
 import org.sidkr.productservice.dtos.ProductDTO;
-import org.sidkr.productservice.models.Category;
 import org.sidkr.productservice.models.Product;
 import org.sidkr.productservice.utility.ProductMapperUtility;
 import org.springframework.http.HttpEntity;
@@ -12,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class FakeStoreClient {
@@ -24,9 +24,9 @@ public class FakeStoreClient {
         this.productMapper = productMapper;
     }
 
-    public Product getProduct(long productId) {
+    public Optional<Product> getProduct(long productId) {
         ProductDTO productDTO = restTemplate.getForEntity("https://fakestoreapi.com/products/{id}", ProductDTO.class, productId).getBody();
-        return productDTO == null ? null : productMapper.convertProductDTOToProduct(productDTO);
+        return Optional.ofNullable(productMapper.convertProductDTOToProduct(productDTO));
     }
 
     public List<Product> getAllProducts(){
@@ -45,16 +45,16 @@ public class FakeStoreClient {
         return productDTO == null ? null : productMapper.convertProductDTOToProduct(productDTO);
     }
 
-    public Product updateProduct(Long productId, Product product) {
+    public Optional<Product> updateProduct(Long productId, Product product) {
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
         ProductDTO productDTO = restTemplate.patchForObject("https://fakestoreapi.com/products/{id}" , productMapper.convertProducttoProductDTO(product), ProductDTO.class, productId);
-        return productDTO == null ? null : productMapper.convertProductDTOToProduct(productDTO);
+        return Optional.ofNullable(productMapper.convertProductDTOToProduct(productDTO));
     }
 
-    public Product replaceProduct(Long productId, Product product){
+    public Optional<Product> replaceProduct(Long productId, Product product){
         HttpEntity<ProductDTO> requestEntity = new HttpEntity<>(productMapper.convertProducttoProductDTO(product));
         ProductDTO productDTO = restTemplate.exchange("https://fakestoreapi.com/products/{id}", HttpMethod.PUT, requestEntity, ProductDTO.class, productId).getBody();
-        return productDTO == null ? null : productMapper.convertProductDTOToProduct(productDTO);
+        return Optional.ofNullable(productMapper.convertProductDTOToProduct(productDTO));
     }
 
     public void deleteProduct(Long productId) {

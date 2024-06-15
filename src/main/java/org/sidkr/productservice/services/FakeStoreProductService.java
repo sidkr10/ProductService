@@ -1,10 +1,12 @@
 package org.sidkr.productservice.services;
 
 import org.sidkr.productservice.clients.FakeStoreClient;
+import org.sidkr.productservice.exceptions.ResourceNotFoundException;
 import org.sidkr.productservice.models.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FakeStoreProductService implements ProductService {
@@ -17,7 +19,10 @@ public class FakeStoreProductService implements ProductService {
 
     @Override
     public Product getProduct(Long id) {
-        return fakeStoreClient.getProduct(id);
+        Optional<Product> product = fakeStoreClient.getProduct(id);
+        if (product.isEmpty())
+            throw new ResourceNotFoundException("Product with id " + id + " not found");
+        return product.get();
     }
 
     @Override
@@ -32,7 +37,10 @@ public class FakeStoreProductService implements ProductService {
 
     @Override
     public Product updateProduct(Long productId, Product product) {
-        return fakeStoreClient.updateProduct(productId, product);
+        Optional<Product> productOptional = fakeStoreClient.getProduct(productId);
+        if(productOptional.isEmpty())
+            throw new ResourceNotFoundException("Product with id " + productId + " not found");
+        return productOptional.get();
     }
 
     @Override
@@ -42,7 +50,10 @@ public class FakeStoreProductService implements ProductService {
 
     @Override
     public Product replaceProduct(Long productId, Product product) {
-        return fakeStoreClient.replaceProduct(productId, product);
+        Optional<Product> productOptional = fakeStoreClient.getProduct(productId);
+        if(productOptional.isEmpty())
+            throw new ResourceNotFoundException("Product with id " + productId + " not found");
+        return productOptional.get();
     }
 
 }

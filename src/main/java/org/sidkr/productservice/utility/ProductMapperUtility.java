@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 public class ProductMapperUtility {
 
     public ProductDTO convertProducttoProductDTO(Product product) {
+        if(product == null)
+            return null;
         ProductDTO productDTO = new ProductDTO();
         productDTO.setId(product.getId());
         productDTO.setTitle(product.getTitle());
@@ -21,6 +23,8 @@ public class ProductMapperUtility {
     }
 
     public Product convertProductDTOToProduct(ProductDTO productDTO) {
+        if(productDTO == null)
+            return null;
         Product product = new Product();
         product.setId(productDTO.getId());
         product.setTitle(productDTO.getTitle());
