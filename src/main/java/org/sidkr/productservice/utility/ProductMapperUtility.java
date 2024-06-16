@@ -1,8 +1,10 @@
 package org.sidkr.productservice.utility;
 
 import org.sidkr.productservice.dtos.ProductDTO;
+import org.sidkr.productservice.dtos.RatingDTO;
 import org.sidkr.productservice.models.Category;
 import org.sidkr.productservice.models.Product;
+import org.sidkr.productservice.models.Rating;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,7 +18,8 @@ public class ProductMapperUtility {
         productDTO.setTitle(product.getTitle());
         productDTO.setDescription(product.getDescription());
         productDTO.setPrice(product.getPrice());
-        productDTO.setRating(product.getRating());
+        RatingDTO ratingDTO = new RatingDTO(product.getRating().getCount(),product.getRating().getRate());
+        productDTO.setRating(ratingDTO);
         productDTO.setCategory(product.getCategory().getName());
         productDTO.setImage(product.getImageUrl());
         return productDTO;
@@ -30,7 +33,10 @@ public class ProductMapperUtility {
         product.setTitle(productDTO.getTitle());
         product.setDescription(productDTO.getDescription());
         product.setPrice(productDTO.getPrice());
-        product.setRating(productDTO.getRating());
+        Rating rating = new Rating();
+        rating.setCount(productDTO.getRating().getCount());
+        rating.setRate(productDTO.getRating().getRating());
+        product.setRating(rating);
         Category category = new Category();
         category.setName(productDTO.getCategory());
         product.setCategory(category);

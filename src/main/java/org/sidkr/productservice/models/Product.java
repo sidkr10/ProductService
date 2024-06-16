@@ -1,19 +1,21 @@
 package org.sidkr.productservice.models;
 
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.sidkr.productservice.dtos.ProductDTO;
 
 @Getter
 @Setter
-public class Product {
-    private Long id;
+@Entity
+public class Product extends BaseModel {
     private String title;
     private String description;
     private Double price;
     private String imageUrl;
+    @ManyToOne
     private Category category;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "rating_id", referencedColumnName = "id")
     private Rating rating;
 
 }

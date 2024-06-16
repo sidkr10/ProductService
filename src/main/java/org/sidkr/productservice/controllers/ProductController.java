@@ -1,6 +1,7 @@
 package org.sidkr.productservice.controllers;
 
 import org.sidkr.productservice.dtos.ProductDTO;
+import org.sidkr.productservice.exceptions.BadRequestException;
 import org.sidkr.productservice.models.Product;
 import org.sidkr.productservice.services.FakeStoreProductService;
 import org.sidkr.productservice.utility.ProductMapperUtility;
@@ -21,8 +22,10 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable("id") long id) {
-        return fakeStoreProductService.getProduct(id);
+    public ProductDTO getProductById(@PathVariable("id") Long id) {
+        if(id == null || id <= 0)
+            throw new BadRequestException("Product id must be a positive integer");
+        return productMapper.convertProducttoProductDTO(fakeStoreProductService.getProduct(id));
     }
 
     @GetMapping
@@ -31,22 +34,28 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product addProduct(@RequestBody ProductDTO productDTO) {
-        return fakeStoreProductService.addProduct(productMapper.convertProductDTOToProduct(productDTO));
+    public ProductDTO addProduct(@RequestBody ProductDTO productDTO) {
+        return productMapper.convertProducttoProductDTO(fakeStoreProductService.addProduct(productMapper.convertProductDTOToProduct(productDTO)));
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO) {
-        return fakeStoreProductService.replaceProduct(id, productMapper.convertProductDTOToProduct(productDTO));
+    public ProductDTO updateProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO) {
+        if(id == null || id <= 0)
+            throw new BadRequestException("Product id must be a positive integer");
+        return productMapper.convertProducttoProductDTO(fakeStoreProductService.replaceProduct(id, productMapper.convertProductDTOToProduct(productDTO)));
     }
 
     @PatchMapping("/{id}")
-    public Product patchProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO) {
-        return fakeStoreProductService.updateProduct(id, productMapper.convertProductDTOToProduct(productDTO));
+    public ProductDTO patchProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO) {
+        if(id == null || id <= 0)
+            throw new BadRequestException("Product id must be a positive integer");
+        return productMapper.convertProducttoProductDTO(fakeStoreProductService.updateProduct(id, productMapper.convertProductDTOToProduct(productDTO)));
     }
 
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable("id") Long id) {
+        if(id == null || id <= 0)
+            throw new BadRequestException("Product id must be a positive integer");
         fakeStoreProductService.deleteProduct(id);
     }
 
