@@ -9,5 +9,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RatingDTO {
     private Integer count;
-    private Double rating;
+    private Double rate;
 }

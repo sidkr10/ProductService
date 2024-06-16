@@ -1,8 +1,6 @@
 package org.sidkr.productservice.advices;
 
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
 import org.sidkr.productservice.exceptions.ErrorDetails;
 import org.sidkr.productservice.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -15,7 +13,7 @@ import java.time.LocalDateTime;
 
 @RestControllerAdvice
 @Slf4j
-public class ProductControllerAdvice {
+public class ProductExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorDetails> resourceNotFound(ResourceNotFoundException e, WebRequest request) {
