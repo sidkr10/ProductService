@@ -8,5 +8,4 @@ import java.util.Optional;
 public interface RatingsRepository extends JpaRepository<Rating, Long> {
 
     Optional<Rating> findRatingById(Long productId);
-    Rating save(Rating rating);
 }

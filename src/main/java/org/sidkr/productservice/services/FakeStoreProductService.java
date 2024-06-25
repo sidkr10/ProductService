@@ -3,7 +3,6 @@ package org.sidkr.productservice.services;
 import org.sidkr.productservice.clients.FakeStoreClient;
 import org.sidkr.productservice.exceptions.ResourceNotFoundException;
 import org.sidkr.productservice.models.Product;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
