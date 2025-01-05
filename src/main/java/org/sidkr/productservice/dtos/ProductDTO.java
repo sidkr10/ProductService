@@ -1,11 +1,12 @@
 package org.sidkr.productservice.dtos;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.sidkr.productservice.models.Rating;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ProductDTO {
     private Long id;
     private String title;

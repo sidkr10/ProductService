@@ -4,8 +4,9 @@ import org.sidkr.productservice.dtos.ProductDTO;
 import org.sidkr.productservice.exceptions.BadRequestException;
 import org.sidkr.productservice.models.Product;
 import org.sidkr.productservice.services.ProductService;
-import org.sidkr.productservice.utility.ProductMapperUtility;
+import org.sidkr.productservice.utility.ProductMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,9 +16,9 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductMapperUtility productMapper;
+    private final ProductMapper productMapper;
 
-    public ProductController(@Qualifier("productCatalogueService") ProductService productService, ProductMapperUtility productMapper) {
+    public ProductController(@Qualifier("productCatalogueService") ProductService productService, ProductMapper productMapper) {
         this.productService = productService;
         this.productMapper = productMapper;
     }
@@ -26,7 +27,7 @@ public class ProductController {
     public ProductDTO getProductById(@PathVariable("id") Long id) {
         if(id == null || id <= 0)
             throw new BadRequestException("Product id must be a positive integer");
-        return productMapper.convertProducttoProductDTO(productService.getProduct(id));
+        return productMapper.toDto(productService.getProduct(id));
     }
 
     @GetMapping
@@ -35,27 +36,30 @@ public class ProductController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ProductDTO addProduct(@RequestBody ProductDTO productDTO) {
-        return productMapper.convertProducttoProductDTO(productService.addProduct(productMapper.convertProductDTOToProduct(productDTO)));
+        Product product = productMapper.toEntity(productDTO);
+        return productMapper.toDto(productService.addProduct(product));
     }
 
     @PutMapping("/{id}")
     public ProductDTO updateProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO) {
         if(id == null || id <= 0)
             throw new BadRequestException("Product id must be a positive integer");
-        Product product = productMapper.convertProductDTOToProduct(productDTO);
-        return productMapper.convertProducttoProductDTO(productService.replaceProduct(id,product));
+        Product product = productMapper.toEntity(productDTO);
+        return productMapper.toDto(productService.replaceProduct(id,product));
     }
 
     @PatchMapping("/{id}")
     public ProductDTO patchProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO) {
         if(id == null || id <= 0)
             throw new BadRequestException("Product id must be a positive integer");
-        Product product = productMapper.convertProductDTOToProduct(productDTO);
-        return productMapper.convertProducttoProductDTO(productService.updateProduct(id, product));
+        Product product = productMapper.toEntity(productDTO);
+        return productMapper.toDto(productService.updateProduct(id, product));
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@PathVariable("id") Long id) {
         if(id == null || id <= 0)
             throw new BadRequestException("Product id must be a positive integer");
