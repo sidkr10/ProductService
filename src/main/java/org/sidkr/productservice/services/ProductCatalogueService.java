@@ -9,6 +9,7 @@ import org.sidkr.productservice.repositories.ProductRepository;
 import org.sidkr.productservice.repositories.RatingsRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,6 +86,14 @@ public class ProductCatalogueService implements ProductService {
         saveAndSetRatings(product, optionalProduct.get().getRating().getId());
         saveAndSetCategory(product);
         return productRepository.save(product);
+    }
+
+    @Override
+    public List<Product> getProductByCategory(String categoryName) {
+        Optional<Category> category = categoryRepository.findCategoriesByName(categoryName);
+        if(category.isEmpty())
+            throw new ResourceNotFoundException("Category with name " + categoryName + " not found");
+        return productRepository.findAllByCategoryName(category.get().getName()).orElse(new ArrayList<>());
     }
 
     private void saveAndSetCategory(Product product) {

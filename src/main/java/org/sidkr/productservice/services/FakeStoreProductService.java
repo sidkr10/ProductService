@@ -6,6 +6,7 @@ import org.sidkr.productservice.exceptions.ResourceNotFoundException;
 import org.sidkr.productservice.models.Product;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,6 +69,11 @@ public class FakeStoreProductService implements ProductService {
         if(productOptional.isEmpty())
             throw new ResourceNotFoundException("Product with id " + productId + " not found");
         return productOptional.get();
+    }
+
+    @Override
+    public List<Product> getProductByCategory(String category) {
+        return fakeStoreClient.getProductsByCategory(category).orElse(new ArrayList<>());
     }
 
 }

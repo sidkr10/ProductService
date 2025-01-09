@@ -1,5 +1,6 @@
 package org.sidkr.productservice.clients;
 
+import org.modelmapper.ModelMapper;
 import org.sidkr.productservice.dtos.ProductDTO;
 import org.sidkr.productservice.models.Product;
 import org.sidkr.productservice.utility.ProductMapper;
@@ -12,16 +13,20 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Component
 public class FakeStoreClient {
 
     private final RestTemplate restTemplate;
     private final ProductMapper productMapper;
+    private final ModelMapper modelMapper;
 
-    public FakeStoreClient(RestTemplate restTemplate, ProductMapper productMapper) {
+    public FakeStoreClient(RestTemplate restTemplate, ProductMapper productMapper,
+                           ModelMapper modelMapper) {
         this.restTemplate = restTemplate;
         this.productMapper = productMapper;
+        this.modelMapper = modelMapper;
     }
 
     public Optional<Product> getProduct(long productId) {
@@ -59,6 +64,15 @@ public class FakeStoreClient {
 
     public void deleteProduct(Long productId) {
         restTemplate.delete("https://fakestoreapi.com/products/{id}", productId);
+    }
+
+    public Optional<List<Product>> getProductsByCategory(String category) {
+        ProductDTO[] productDTO = restTemplate.getForObject("https://fakestoreapi.com/products/category/{category}", ProductDTO[].class, category);
+        if(productDTO == null){
+            return Optional.empty();
+        }
+        List<Product> products = Stream.of(productDTO).map((element) -> modelMapper.map(element, Product.class)).toList();
+        return Optional.of(products);
     }
 
 }

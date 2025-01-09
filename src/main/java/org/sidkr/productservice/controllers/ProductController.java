@@ -1,5 +1,6 @@
 package org.sidkr.productservice.controllers;
 
+import org.modelmapper.ModelMapper;
 import org.sidkr.productservice.dtos.ProductDTO;
 import org.sidkr.productservice.exceptions.BadRequestException;
 import org.sidkr.productservice.models.Product;
@@ -17,10 +18,13 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
+    private final ModelMapper modelMapper;
 
-    public ProductController(@Qualifier("productCatalogueService") ProductService productService, ProductMapper productMapper) {
+    public ProductController(@Qualifier("fakeStoreProductService") ProductService productService, ProductMapper productMapper,
+                             ModelMapper modelMapper) {
         this.productService = productService;
         this.productMapper = productMapper;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/{id}")
@@ -33,6 +37,13 @@ public class ProductController {
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    @GetMapping("/search")
+    public List<ProductDTO> getAllProductsByCategory(@RequestParam(value = "category") String category) {
+        if(category == null || category.isEmpty())
+            throw new BadRequestException("Category must be a valid String");
+        return productService.getProductByCategory(category).stream().map((element) -> modelMapper.map(element, ProductDTO.class)).toList();
     }
 
     @PostMapping
